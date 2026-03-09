@@ -1,158 +1,237 @@
 import React from 'react';
 import { useResume } from '../context/ResumeContext';
 
+// Section Header Component
+const SectionHeader = ({ title }: { title: string }) => (
+  <div style={{ marginBottom: '8px' }}>
+    <h2 style={{
+      fontSize: '13px',
+      fontWeight: '800',
+      textTransform: 'uppercase',
+      letterSpacing: '0.1em',
+      color: '#111',
+      margin: '0 0 4px',
+      fontFamily: "'DM Sans', sans-serif"
+    }}>
+      {title}
+    </h2>
+    <hr style={{ border: 'none', borderTop: '1.5px solid #ddd', margin: 0 }} />
+  </div>
+);
+
 export const ResumePreview: React.FC = () => {
   const { resume } = useResume();
 
+  // Group skills by category
+  const skillsByCategory = resume.skills.reduce((acc, skill) => {
+    const category = skill.category || 'Technical Skills';
+    if (!acc[category]) acc[category] = [];
+    acc[category].push(skill.name);
+    return acc;
+  }, {} as Record<string, string[]>);
+
   return (
     <>
-      {/* Header */}
-      <div style={{ marginBottom: '24px', textAlign: 'center', borderBottom: '2px solid #ddd', paddingBottom: '24px' }}>
-        <h1 style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '8px' }}>{resume.personalInfo.fullName || 'Your Name'}</h1>
-        <p style={{ fontSize: '16px', color: '#555', marginBottom: '12px' }}>{resume.personalInfo.jobTitle || 'Your Job Title'}</p>
+      {/* ── HEADER SECTION ── */}
+      <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+        <h1 style={{
+          fontSize: '26px',
+          fontWeight: '800',
+          letterSpacing: '0.06em',
+          textTransform: 'uppercase',
+          color: '#111',
+          margin: '0 0 6px',
+          fontFamily: "'DM Sans', sans-serif"
+        }}>
+          {resume.personalInfo.fullName || 'Your Name'}
+        </h1>
 
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'wrap', fontSize: '13px', color: '#666' }}>
+        <p style={{ fontSize: '13px', color: '#444', margin: '0 0 4px', fontWeight: 500 }}>
+          {resume.personalInfo.jobTitle || 'Your Job Title'}
+        </p>
+
+        {/* Contact info row — only show filled fields */}
+        <div style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          gap: '6px',
+          fontSize: '12px',
+          color: '#555',
+          marginTop: '8px'
+        }}>
           {resume.personalInfo.email && <span>{resume.personalInfo.email}</span>}
-          {resume.personalInfo.phone && <span>•</span>}
+          {resume.personalInfo.email && resume.personalInfo.phone && <span style={{ color: '#ccc' }}>|</span>}
           {resume.personalInfo.phone && <span>{resume.personalInfo.phone}</span>}
-          {resume.personalInfo.location && <span>•</span>}
-          {resume.personalInfo.location && <span>{resume.personalInfo.location}</span>}
-        </div>
-
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'wrap', fontSize: '13px', marginTop: '8px' }}>
+          {resume.personalInfo.location && (
+            <>
+              <span style={{ color: '#ccc' }}>|</span>
+              <span>{resume.personalInfo.location}</span>
+            </>
+          )}
           {resume.personalInfo.linkedin && (
-            <a href={`https://${resume.personalInfo.linkedin}`} style={{ color: '#0066cc', textDecoration: 'underline' }}>
-              LinkedIn
-            </a>
+            <>
+              <span style={{ color: '#ccc' }}>|</span>
+              <span>{resume.personalInfo.linkedin}</span>
+            </>
           )}
           {resume.personalInfo.github && (
-            <a href={`https://${resume.personalInfo.github}`} style={{ color: '#0066cc', textDecoration: 'underline' }}>
-              GitHub
-            </a>
+            <>
+              <span style={{ color: '#ccc' }}>|</span>
+              <span>{resume.personalInfo.github}</span>
+            </>
           )}
         </div>
       </div>
 
-      {/* Summary */}
+      {/* ── DIVIDER ── */}
+      <hr style={{ border: 'none', borderTop: '2px solid #111', margin: '0 0 16px' }} />
+
+      {/* ── PROFESSIONAL SUMMARY ── */}
       {resume.summary && (
-        <div style={{ marginBottom: '20px' }}>
-          <h2 style={{ fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.08em', borderLeft: '3px solid #1a1a1a', paddingLeft: '12px', marginBottom: '12px' }}>
-            Professional Summary
-          </h2>
-          <p style={{ fontSize: '13px', color: '#444', lineHeight: '1.6' }}>{resume.summary}</p>
-        </div>
+        <section style={{ marginBottom: '18px' }}>
+          <SectionHeader title="Professional Summary" />
+          <p style={{ fontSize: '12.5px', lineHeight: '1.65', color: '#333', margin: 0 }}>
+            {resume.summary}
+          </p>
+        </section>
       )}
 
-      {/* Experience */}
-      {resume.experiences.length > 0 && (
-        <div style={{ marginBottom: '20px' }}>
-          <h2 style={{ fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.08em', borderLeft: '3px solid #1a1a1a', paddingLeft: '12px', marginBottom: '12px' }}>
-            Work Experience
-          </h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {resume.experiences.map((exp) => (
-              <div key={exp.id}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <div>
-                    <h3 style={{ fontWeight: 'bold', color: '#1a1a1a' }}>{exp.role}</h3>
-                    <p style={{ fontSize: '13px', color: '#666' }}>{exp.company}</p>
-                  </div>
-                  <div style={{ fontSize: '13px', color: '#666' }}>
-                    {exp.startDate}
-                    {exp.endDate && ` – ${exp.endDate}`}
-                    {exp.currentlyWorking && ' – Present'}
-                  </div>
-                </div>
-                {exp.bullets.length > 0 && (
-                  <ul style={{ marginTop: '8px', marginLeft: '20px' }}>
-                    {exp.bullets.map((bullet, idx) => (
-                      <li key={idx} style={{ fontSize: '13px', color: '#444', marginBottom: '4px' }}>{bullet}</li>
-                    ))}
-                  </ul>
-                )}
+      {/* ── TECHNICAL SKILLS ── */}
+      {resume.skills && resume.skills.length > 0 && (
+        <section style={{ marginBottom: '18px' }}>
+          <SectionHeader title="Technical Skills" />
+          <div style={{ fontSize: '12.5px', lineHeight: '1.7', color: '#333' }}>
+            {Object.entries(skillsByCategory).map(([category, skills]) => (
+              <div key={category} style={{ marginBottom: '4px' }}>
+                <span style={{ fontWeight: '700', color: '#111' }}>
+                  {category}:{' '}
+                </span>
+                <span>{skills.join(', ')}</span>
               </div>
             ))}
           </div>
-        </div>
+        </section>
       )}
 
-      {/* Projects */}
-      {resume.projects.length > 0 && (
-        <div style={{ marginBottom: '20px' }}>
-          <h2 style={{ fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.08em', borderLeft: '3px solid #1a1a1a', paddingLeft: '12px', marginBottom: '12px' }}>
-            Projects
-          </h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {resume.projects.map((proj) => (
-              <div key={proj.id}>
+      {/* ── WORK EXPERIENCE ── */}
+      {resume.experiences && resume.experiences.length > 0 && (
+        <section style={{ marginBottom: '18px' }}>
+          <SectionHeader title="Work Experience" />
+          {resume.experiences.map((job) => (
+            <div key={job.id} style={{ marginBottom: '14px' }}>
+              {/* Job header row */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2px' }}>
                 <div>
-                  <h3 style={{ fontWeight: 'bold', color: '#1a1a1a' }}>{proj.name}</h3>
-                  {proj.techStack.length > 0 && (
-                    <p style={{ fontSize: '13px', color: '#666' }}>{proj.techStack.join(' • ')}</p>
-                  )}
-                  {proj.link && (
-                    <p style={{ fontSize: '13px' }}>
-                      <a href={proj.link} style={{ color: '#0066cc', textDecoration: 'underline' }}>
-                        {proj.link}
-                      </a>
-                    </p>
+                  <span style={{ fontWeight: '700', fontSize: '13px', color: '#111' }}>
+                    {job.role}
+                  </span>
+                  {job.company && (
+                    <span style={{ fontSize: '12.5px', color: '#444' }}>
+                      {' '}— {job.company}
+                    </span>
                   )}
                 </div>
-                {proj.bullets.length > 0 && (
-                  <ul style={{ marginTop: '8px', marginLeft: '20px' }}>
-                    {proj.bullets.map((bullet, idx) => (
-                      <li key={idx} style={{ fontSize: '13px', color: '#444', marginBottom: '4px' }}>{bullet}</li>
-                    ))}
-                  </ul>
+                <span style={{ fontSize: '11.5px', color: '#666', whiteSpace: 'nowrap', marginLeft: '12px' }}>
+                  {job.startDate}{job.endDate ? ` – ${job.endDate}` : job.currentlyWorking ? ' – Present' : ''}
+                </span>
+              </div>
+
+              {/* Bullet points */}
+              {job.bullets && job.bullets.length > 0 && (
+                <ul style={{ margin: '4px 0 0 0', paddingLeft: '18px' }}>
+                  {job.bullets.map((bullet, j) => (
+                    <li
+                      key={j}
+                      style={{
+                        fontSize: '12px',
+                        lineHeight: '1.6',
+                        color: '#333',
+                        marginBottom: '2px'
+                      }}
+                    >
+                      {bullet}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))}
+        </section>
+      )}
+
+      {/* ── EDUCATION ── */}
+      {resume.education && resume.education.length > 0 && (
+        <section style={{ marginBottom: '18px' }}>
+          <SectionHeader title="Education" />
+          {resume.education.map((edu) => (
+            <div key={edu.id} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+              <div>
+                <span style={{ fontWeight: '700', fontSize: '13px', color: '#111' }}>
+                  {edu.degree}
+                </span>
+                {edu.field && (
+                  <span style={{ fontSize: '12.5px', color: '#444' }}>
+                    {' '}in {edu.field}
+                  </span>
+                )}
+                {edu.institution && (
+                  <p style={{ fontSize: '12px', color: '#555', margin: '1px 0 0' }}>
+                    {edu.institution}
+                  </p>
                 )}
               </div>
-            ))}
-          </div>
-        </div>
+              {edu.graduationYear && (
+                <span style={{ fontSize: '11.5px', color: '#666', whiteSpace: 'nowrap', marginLeft: '12px' }}>
+                  {edu.graduationYear}
+                </span>
+              )}
+            </div>
+          ))}
+        </section>
       )}
 
-      {/* Education */}
-      {resume.education.length > 0 && (
-        <div style={{ marginBottom: '20px' }}>
-          <h2 style={{ fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.08em', borderLeft: '3px solid #1a1a1a', paddingLeft: '12px', marginBottom: '12px' }}>
-            Education
-          </h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {resume.education.map((edu) => (
-              <div key={edu.id}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <div>
-                    <h3 style={{ fontWeight: 'bold', color: '#1a1a1a' }}>{edu.degree}</h3>
-                    <p style={{ fontSize: '13px', color: '#666' }}>{edu.institution}</p>
-                    {edu.field && <p style={{ fontSize: '13px', color: '#666' }}>{edu.field}</p>}
-                  </div>
-                  {edu.graduationYear && <div style={{ fontSize: '13px', color: '#666' }}>{edu.graduationYear}</div>}
-                </div>
+      {/* ── PROJECTS ── */}
+      {resume.projects && resume.projects.length > 0 && (
+        <section style={{ marginBottom: '18px' }}>
+          <SectionHeader title="Projects" />
+          {resume.projects.map((proj) => (
+            <div key={proj.id} style={{ marginBottom: '10px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+                <span style={{ fontWeight: '700', fontSize: '13px', color: '#111' }}>
+                  {proj.name}
+                </span>
+                {proj.link && (
+                  <span style={{ fontSize: '11px', color: '#666', whiteSpace: 'nowrap', marginLeft: '12px' }}>
+                    {proj.link}
+                  </span>
+                )}
               </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Skills */}
-      {resume.skills.length > 0 && (
-        <div>
-          <h2 style={{ fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.08em', borderLeft: '3px solid #1a1a1a', paddingLeft: '12px', marginBottom: '12px' }}>
-            Skills
-          </h2>
-          {Object.entries({
-            'Technical': resume.skills.filter(s => s.category === 'technical'),
-            'Soft Skills': resume.skills.filter(s => s.category === 'soft'),
-            'Tools': resume.skills.filter(s => s.category === 'tools'),
-          }).map(([category, skills]) =>
-            skills.length > 0 ? (
-              <div key={category} style={{ display: 'flex', gap: '12px', marginBottom: '6px' }}>
-                <span style={{ fontWeight: 'bold', color: '#1a1a1a', minWidth: 'fit-content' }}>{category}:</span>
-                <span style={{ color: '#444' }}>{skills.map(s => s.name).join(', ')}</span>
-              </div>
-            ) : null
-          )}
-        </div>
+              {proj.techStack && proj.techStack.length > 0 && (
+                <p style={{ fontSize: '11.5px', color: '#555', margin: '2px 0 4px', fontStyle: 'italic' }}>
+                  {proj.techStack.join(', ')}
+                </p>
+              )}
+              {proj.bullets && proj.bullets.length > 0 && (
+                <ul style={{ margin: '0', paddingLeft: '18px' }}>
+                  {proj.bullets.map((bullet, j) => (
+                    <li
+                      key={j}
+                      style={{
+                        fontSize: '12px',
+                        lineHeight: '1.6',
+                        color: '#333',
+                        marginBottom: '2px'
+                      }}
+                    >
+                      {bullet}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))}
+        </section>
       )}
     </>
   );
