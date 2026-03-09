@@ -1,0 +1,154 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  background: #0d0d0d;
+  color: #f0ece4;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Kill any default form styling */
+input, textarea, select {
+  width: 100%;
+  background: #111;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  padding: 11px 14px;
+  color: #f0ece4;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  margin-top: 6px;
+  display: block;
+}
+
+input:focus, textarea:focus {
+  border-color: #c9a96e;
+  box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.1);
+}
+
+input::placeholder, textarea::placeholder {
+  color: #3d3830;
+}
+
+label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6b6560;
+  margin-top: 18px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #c9a96e;
+}
+
+/* Selection */
+::selection {
+  background: #c9a96e;
+  color: #0d0d0d;
+}
+
+/* Typography */
+h1, h2, h3, h4 {
+  font-family: 'Playfair Display', serif;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+  border: none;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #c9a96e, #8b6914);
+  color: #0d0d0d;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid #2a2a2a;
+  color: #9a9088;
+}
+
+.btn-secondary:hover {
+  background: #1a1a1a;
+  border-color: #333;
+}
+
+/* Cards */
+.card {
+  background: #1a1a1a;
+  border: 1px solid #222;
+  border-radius: 12px;
+  padding: 16px;
+  transition: border-color 0.3s ease;
+}
+
+.card:hover {
+  border-color: #333;
+}
+
+/* Tags */
+.tag {
+  background: rgba(201, 169, 110, 0.1);
+  border: 1px solid rgba(201, 169, 110, 0.3);
+  color: #c9a96e;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  transition: all 0.2s ease;
+}
+
+.tag:hover {
+  border-color: #c9a96e;
+  background: rgba(201, 169, 110, 0.15);
+}
